@@ -24,18 +24,37 @@
 #    (Ver formato en salida esperada)
 
 def ingreso_total(*montos):
-    # TODO: SIN sum()
-    pass
+    total = 0
+    for monto in montos:
+        total += monto
+    return total
 
 
 def mejor_sala(*salas):
-    # TODO: SIN max(). Cada sala es (nombre, ventas)
-    pass
+    if salas == ():
+        return ("N/A", 0)
+    mejor = salas [0]
 
+    for sala in salas:
+        if sala[1] > mejor[1]:
+            mejor = sala
+    return mejor
 
 def reporte_multisala(titulo, *funciones):
-    # TODO: Cada función es (nombre, precio, vendidas, descuento)
-    pass
+    resultado = f"=== {titulo} ===\n"
+    total = 0
+    contador = 1
+
+    for nombre, precio, vendidas, descuento in funciones:
+        ingreso = precio * vendidas * (1 - descuento / 100)
+        ingreso = round(ingreso, 2)
+        resultado += f"Función {contador}: {nombre:<12} | Q{ingreso:.2f}\n"
+        total += ingreso
+        contador += 1
+    
+    resultado += "---\n"
+    resultado += f"TOTAL: Q{total:.2f}"
+    return resultado
 
 
 # --- Pruebas (NO modificar) ---
@@ -92,8 +111,23 @@ print(reporte_multisala("Sala IMAX — Sábado",
 # Cada clave de **extras se muestra capitalizada.
 
 def ficha_pelicula(titulo, duracion, rating, **extras):
-    # TODO
-    pass
+    ancho_total = 35
+    ancho_interno = ancho_total - 2
+    borde = "┌" + "-" * ancho_interno + "┐"
+    separador = "├" + "-" * ancho_interno + "┤"
+    cierre = "└" + "-" * ancho_interno + "┘"
+    resultado = borde + "\n"
+    resultado += "|" + f"{titulo:^{ancho_interno}}" + "|\n"
+    resultado += separador + "\n"
+    resultado += "|" + f"{'Duración : ' + str(duracion) + ' min':<{ancho_interno}}" + "|\n"
+    resultado += "|" + f"{'Rating   : ★ ' + str(rating):<{ancho_interno}}" + "|\n"
+
+    for clave, valor in extras.items():
+        nombre_clave = clave.capitalize()
+        linea = f"{nombre_clave:<9}: {valor}"
+        resultado += "|" + f"{linea:<{ancho_interno}}" + "|\n"
+    resultado += cierre
+    return resultado
 
 
 # --- Pruebas (NO modificar) ---
@@ -148,23 +182,54 @@ print(ficha_pelicula("Inside Out 3", 105, 8.9))
 #    Para el promedio semanal de cada sala, divide total / 7.
 
 def calcular_totales(ventas_por_sala):
-    # TODO: Usa ingreso_total del ejercicio 3.1
-    pass
-
+    resultado = []
+    for nombre, lista in ventas_por_sala.items():
+        total = ingreso_total(*lista)
+        resultado.append((nombre, total))
+    return resultado
 
 def ordenar_salas(lista_tuplas):
-    # TODO: Burbuja descendente. SIN sorted()/.sort()
-    pass
+    n = len(lista_tuplas)
+    lista = lista_tuplas[:]
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if lista[j][1] < lista[j + 1][1]:
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+    return lista
 
 
 def tendencia(valores):
-    # TODO
-    pass
+    asc = True
+    desc = True
+
+    for i in range(1, len(valores)):
+        if valores[i] < valores[i - 1]:
+            asc = False
+        if valores[i] > valores[i - 1]:
+            desc = False
+    if asc:
+        return "ascendente"
+    elif desc:
+        return "descendente"
+    else:
+        return "irregular"
 
 
 def reporte_semanal(nombre_cine, ventas_por_sala):
-    # TODO: Usa todas las funciones anteriores
-    pass
+    resultado = f"=== REPORTE SEMANAL: {nombre_cine} ===\n"
+    totales = calcular_totales(ventas_por_sala)
+    ordenadas = ordenar_salas(totales)
+    ranking = 1
+    for nombre, total in ordenadas:
+        lista = ventas_por_sala[nombre]
+        promedio = round(total / 7, 2)
+        tend = tendencia(lista)
+        resultado += f"#{ranking} {nombre:<10} | Total: {total:<4} | Prom: {promedio:.2f} | Tendencia: {tend}\n"
+        ranking += 1
+    resultado += "---\n"
+    mejor = mejor_sala(*ordenadas)
+    resultado += f"Mejor sala de la semana: {mejor[0]} ({mejor[1]} entradas)"
+    return resultado
 
 
 # --- Pruebas (NO modificar) ---

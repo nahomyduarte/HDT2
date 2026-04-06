@@ -26,8 +26,13 @@
 # Todos los valores redondeados a 2 decimales.
 
 def calcular_ingreso(precio_base, vendidas, descuento=0.0, iva=12.0, propina_pct=0.0):
-    # TODO
-    pass
+    ingreso_bruto = round(precio_base * vendidas, 2)
+    monto_descuento = round(ingreso_bruto * (descuento / 100), 2)
+    subtotal = round(ingreso_bruto - monto_descuento, 2)
+    monto_iva = round(subtotal * (iva / 100), 2)
+    monto_propina = round(subtotal * (propina_pct / 100), 2)
+    total = round(subtotal + monto_iva + monto_propina, 2)
+    return (ingreso_bruto, monto_descuento, subtotal, monto_iva, monto_propina, total)
 
 
 # --- Pruebas (NO modificar) ---
@@ -72,8 +77,12 @@ print(f"Caso 3 — Bruto: Q{r3[0]} | Desc: Q{r3[1]} | Sub: Q{r3[2]} | IVA: Q{r3[
 #          → "CD26-VIP-CM0047"
 
 def generar_credencial(nombre_completo, zona="general", numero=1, prefijo="CD26"):
-    # TODO
-    pass
+    zona3 = zona[:3].upper()
+    partes = nombre_completo.split()
+    iniciales = partes[0][0] + partes[-1][0]
+    iniciales = iniciales.upper()
+    numero_str = str(numero).zfill(4)
+    return f"{prefijo}-{zona3}-{iniciales}{numero_str}"
 
 
 # --- Pruebas (NO modificar) ---
@@ -113,8 +122,29 @@ print(generar_credencial("María Luisa Fernández Torres", zona="imax", numero=8
 
 def construir_reporte(titulo, datos, moneda="Q", mostrar_promedio=True,
                       mostrar_ranking=False, ancho_nombre=20):
-    # TODO: SIN sum() ni len()
-    pass
+    linea_titulo = f"{titulo}".center(40, "=")
+    resultado = linea_titulo + "\n"
+    total = 0
+    contador = 0
+    ranking = 1
+    for nombre, valor in datos:
+        total += valor
+        contador += 1
+        if mostrar_ranking:
+            nombre_final = f"#{ranking} {nombre}"
+            ranking += 1
+        else:
+            nombre_final = nombre
+        
+        nombre_formateado = f"{nombre_final:<{ancho_nombre}}"
+        valor_formateado = f"{moneda}{valor:,.2f}"
+        resultado += f"{nombre_formateado} {valor_formateado}\n"
+    if mostrar_promedio:
+        resultado += "---\n"
+
+        promedio = round(total / contador, 2)
+        resultado += f"{'Promedio': <{ancho_nombre}} {moneda}{promedio:,.2f}\n"
+    return resultado
 
 
 # --- Pruebas (NO modificar) ---

@@ -18,13 +18,14 @@
 # Ambas funciones deben redondear a 2 decimales con round().
 
 def precio_con_descuento(precio_base, porcentaje):
-    # TODO
-    pass
+    descuento = precio_base * (porcentaje / 100)
+    precio_final = precio_base - descuento
+    return round(precio_final, 2)
 
 
 def precio_con_iva(precio, iva):
-    # TODO
-    pass
+    precio_final = precio * (1 + iva / 100)
+    return round(precio_final, 2)
 
 
 # --- Pruebas (NO modificar) ---
@@ -61,19 +62,33 @@ print(f"Q200 + 12% IVA = Q{precio_con_iva(200.0, 12)}")
 # DEBE usar las dos funciones anteriores internamente.
 
 def clasificar_duracion(minutos):
-    # TODO
-    pass
+    if minutos < 90:
+        return "corta"
+    elif minutos <= 150:
+        return "estándar"
+    else:
+        return "larga"
 
 
 def clasificar_rating(rating):
-    # TODO
-    pass
+    if rating < 4.0:
+        return "mala"
+    elif rating <=6.9:
+        return "regular"
+    elif rating <= 8.4:
+        return "buena"
+    else:
+        return "excelente"
 
 
 def es_recomendada(duracion, rating):
-    # TODO: Usa clasificar_duracion y clasificar_rating
-    pass
+   d = clasificar_duracion(duracion)
+   r = clasificar_rating(rating)
 
+   if(r == "buena" or r == "excelente") and (d == "corta" or d == "estándar"):
+       return True
+   else: 
+       return True
 
 # --- Pruebas (NO modificar) ---
 print("\n=== Ejercicio 1.2 ===")
@@ -115,8 +130,30 @@ for titulo, dur, rat in peliculas:
 # SIN usar sum(), max(), min(), len(). Usa ciclos for para todo.
 
 def analizar_ventas(ventas):
-    # TODO: SIN sum(), max(), min(), len()
-    pass
+    total = 0
+    mejor_dia = 0
+    peor_dia = 0
+
+    max_ventas = ventas [0]
+    min_ventas = ventas [0]
+
+    contador = 0
+
+    for v in ventas:
+        total += v
+
+        if v > max_ventas:
+            max_ventas = v
+            mejor_dia = contador
+        
+        if v < min_ventas:
+            min_ventas = v
+            peor_dia = contador
+        
+        contador += 1
+    promedio = round(total / contador, 2)
+    return total, promedio, mejor_dia, peor_dia
+
 
 
 # --- Pruebas (NO modificar) ---
@@ -162,18 +199,21 @@ print(f"Peor día: {dias[peor]} ({semana_imax[peor]} entradas)")
 # El nombre debe ocupar 14 caracteres alineado a la izquierda.
 
 def formato_moneda(cantidad):
-    # TODO
-    pass
-
+    return f"Q{cantidad:,.2f}"
 
 def barra_visual(valor, maximo, ancho=20):
-    # TODO
-    pass
+    proporcion = valor / maximo
+    llenos = round(proporcion * ancho)
+    vacios = ancho - llenos
+    porcentaje = round(proporcion * 100)
+    return "█" * llenos + "░" * vacios + f"{porcentaje}%"
 
 
 def linea_reporte(nombre, valor, maximo, ancho=20):
-    # TODO: Usa formato_moneda y barra_visual
-    pass
+    nombre_formateado = f"{nombre: <14}"
+    valor_formateado = formato_moneda(valor)
+    barra = barra_visual(valor, maximo, ancho)
+    return f"{nombre_formateado} | {valor_formateado} | {barra}"
 
 
 # --- Pruebas (NO modificar) ---

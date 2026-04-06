@@ -34,13 +34,41 @@
 # DEBE usar procesar_ventas internamente.
 
 def procesar_ventas(lista_ventas):
-    # TODO: Todo con variables locales, SIN sum/max/min/len
-    pass
+    total = 0
+    conteo = 0
+    positivos = 0
+    mejor = lista_ventas[0]
+    peor = lista_ventas [0]
+    for venta in lista_ventas:
+        total += venta
+        conteo += 1
+        if venta > 0:
+            positivos += 1
+        if venta > mejor:
+            mejor = venta
+        if venta < peor:
+            peor = venta
+    
+    promedio = round(total / conteo, 2)
+    return {"total": total, "conteo": conteo, "promedio": promedio, "positivos": positivos, "mejor": mejor, "peor": peor}
 
 
 def comparar_periodos(ventas_actual, ventas_anterior):
-    # TODO: Usa procesar_ventas
-    pass
+    actual = procesar_ventas(ventas_actual)
+    anterior = procesar_ventas(ventas_anterior)
+    total_actual = actual["total"]
+    total_anterior = anterior["total"]
+    diferencia = total_actual - total_anterior
+    cambio_pct = round((diferencia / total_anterior) * 100, 1)
+
+    if diferencia > 0:
+        veredicto = "mejora"
+    elif diferencia < 0:
+        veredicto = "declive"
+    else:
+        veredicto = "estable"
+    
+    return {"total_actual": total_actual, "total_anterior": total_anterior, "diferencia": diferencia, "cambio_pct": cambio_pct, "veredicto": veredicto}
 
 
 # --- Pruebas (NO modificar) ---
@@ -84,18 +112,25 @@ print(f"Diferencia: {comp['diferencia']} ({comp['cambio_pct']}%) → {comp['vere
 # SIN usar map(), filter(), functools.reduce() ni list comprehensions.
 
 def aplicar_a_cada(funcion, lista):
-    # TODO: SIN map() ni list comprehensions
-    pass
+    resultado = []
+    for elemento in lista:
+        resultado.append(funcion(elemento))
+    return resultado
 
 
 def filtrar(funcion, lista):
-    # TODO: SIN filter() ni list comprehensions
-    pass
+    resultado = []
+    for elemento in lista:
+        if funcion(elemento):
+            resultado.append(elemento)
+    return resultado
 
 
 def reducir(funcion, lista, inicial):
-    # TODO: SIN functools.reduce()
-    pass
+    resultado = inicial
+    for elemento in lista:
+        resultado = funcion(resultado, elemento)
+    return resultado
 
 
 # --- Funciones auxiliares para pruebas (NO modificar) ---
@@ -167,9 +202,37 @@ print(f"Máximo (reducir): {maximo}")
 # Define las funciones auxiliares que necesites.
 
 def analisis_completo(datos_salas):
-    # TODO: Usa aplicar_a_cada, filtrar, reducir y funciones auxiliares propias
-    pass
+   def sumar(a, b):
+       return a + b
+   def doble(x):
+       return x * 2
+   def es_mayor_1000(tupla):
+       return tupla[1] > 1000
+   
+   resumen = []
+   for nombre in datos_salas:
+        total = reducir(sumar, datos_salas[nombre], 0)
+        resumen.append((nombre, total))
 
+   salas_fuertes_tuplas = filtrar(es_mayor_1000, resumen)
+   salas_fuertes = []
+   for tupla in salas_fuertes_tuplas:
+        salas_fuertes.append(tupla[0])
+   totales_fuertes = []
+   for tupla in salas_fuertes_tuplas:
+        totales_fuertes.append(tupla[1])
+
+   proyeccion_quincenal = aplicar_a_cada(doble, totales_fuertes)
+   gran_total_proyectado = reducir(sumar, proyeccion_quincenal, 0)
+
+   return {
+        "resumen": resumen,
+        "salas_fuertes": salas_fuertes,
+        "proyeccion_quincenal": proyeccion_quincenal,
+        "gran_total_proyectado": gran_total_proyectado
+    }
+    
+    
 
 # --- Pruebas (NO modificar) ---
 print("\n=== Ejercicio 4.3 ===")

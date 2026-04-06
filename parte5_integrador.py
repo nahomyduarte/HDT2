@@ -67,11 +67,114 @@ peliculas = [
 
 # --- Tu código aquí ---
 
-# TODO: Implementa las 6 funciones descritas arriba
+def mostrar_menu():
+    print("\n==============================")
+    print("            CINEDATA GT 2026")
+    print("==============================")
+    print("1. Ver cartelera")
+    print("2. Comprar entrada")
+    print("3. Ver mis compras")
+    print("4. Estadísticas")
+    print("5. Salir")
+    opcion = input("Elige una opción: ")
+    return opcion
 
+def mostrar_cartelera(peliculas):
+    print("\n=== CARTELERA ===")
+    for i, pelicula in enumerate(peliculas, start=1):
+        titulo = pelicula[0]
+        genero = pelicula[1]
+        rating = pelicula[2]
+        precio = pelicula[3]
+        print(f"[{i}] {titulo} ({genero}) - ★ {rating} - Q{precio:.2f}")
 
-# TODO: Llamada a la función principal (descomentar cuando esté listo)
-# sistema_taquilla(peliculas)
+def comprar_entrada(peliculas, compras):
+    print("\n=== COMPRAR ENTRADA ===")
+    numero = int(input(f"Elige pelicula (1-{len(peliculas)}): "))
+    while numero < 1 or numero > len(peliculas):
+        numero = int(input(f"Opción inválida. Elige película (1-{len(peliculas)}): "))
+    cantidad = int(input("Cantidad de entradas: "))
+    titulo = peliculas[numero - 1][0]
+    precio_unitario = peliculas[numero - 1][3]
+    subtotal = precio_unitario * cantidad
+    descuento = 0.0
+
+    if cantidad > 4:
+        descuento = subtotal * 0.10
+        print("Descuento 10% por volumen (>4 entradas)")
+    total = subtotal - descuento
+    compras.append([titulo, cantidad, precio_unitario, total])
+    if descuento > 0:
+        print(f"✓ Compra: {cantidad}x {titulo} - Q{precio_unitario:.2f} c/u - Desc: Q{descuento:.2f} - Total: Q{total:.2f}")
+    else:
+        print(f"✓ Compra: {cantidad}x {titulo} - Q{precio_unitario:.2f} c/u - Total: Q{total:.2f}")
+
+def mostrar_compras(compras):
+    print("\n=== MIS COMPRAS ===")
+    if compras == []:
+        print("No hay compras registradas.")
+        return
+    gran_total = 0
+    for i, compra in enumerate(compras, start=1):
+        titulo = compra[0]
+        cantidad = compra[1]
+        total = compra[3]
+        print(f"#{i} {titulo} | {cantidad} entradas | Q{total:.2f}")
+        gran_total += total
+    print("---")
+    print(f"TOTAL: Q{gran_total:.2f}")
+
+def resumen_estadisticas(compras):
+    print("\n=== ESTADÍSTICAS ===")
+
+    if compras == []:
+        print("No hay datos para mostrar.")
+        return
+    total_gastado = 0
+    total_entradas = 0
+    compra_mas_cara_titulo = compras[0][0]
+    compra_mas_cara_total = compras[0][3]
+    conteo_compras = 0
+    for compra in compras:
+        titulo = compra[0]
+        cantidad = compra[1]
+        total = compra[3]
+        total_gastado += total
+        total_entradas += cantidad
+        conteo_compras += 1
+        if total > compra_mas_cara_total:
+            compra_mas_cara_total = total
+            compra_mas_cara_titulo = titulo
+    
+    promedio = total_gastado / conteo_compras
+    print(f"Total gastado      : Q{total_gastado:.2f}")
+    print(f"Total entradas     : {total_entradas}")
+    print(f"Compra más cara    : {compra_mas_cara_titulo} (Q{compra_mas_cara_total:.2f})")
+    print(f"Promedio por compra: Q{promedio:.2f}")
+
+def sistema_taquilla(peliculas):
+    compras = []
+    opcion = ""
+
+    while opcion != "5":
+        opcion = mostrar_menu()
+        if opcion == "1":
+            mostrar_cartelera(peliculas)
+        elif opcion == "2":
+            comprar_entrada(peliculas, compras)
+        elif opcion == "3":
+            mostrar_compras(compras)
+        elif opcion == "4":
+            resumen_estadisticas(compras)
+        elif opcion == "5":
+            total_gastado = 0
+            for compra in compras:
+                total_gastado += compra[3]
+            print(f"¡Gracias por visitar CineData GT! Total gastado: Q{total_gastado:.2f}")
+        else:
+            print("Opción no válida. Intenta de nuevo.")
+
+sistema_taquilla(peliculas)
 
 
 # === Ejemplo de interacción esperada ===
